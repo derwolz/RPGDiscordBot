@@ -7,9 +7,7 @@ import nextcord, re, random, collections, math
 from nextcord.ui import select
 from nextcord.ui import text_input
 from collections import defaultdict
-import time
-import datetime
-
+from time import sleep
 intents = nextcord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -53,7 +51,7 @@ async def on_ready():
     test_channel = bot.get_channel(int(test))
     guild = bot.get_guild(int(guild))
     print("Ready")
-    await get_time_to_warn()
+
 @bot.command()
 async def search(ctx, args):
     print("args:",args)
@@ -266,7 +264,6 @@ async def clear_commands(ctx):
             print(e)
 @bot.command()
 async def get_current_bids(ctx):
-
     bid_history = await loot_channel.history(limit=800).flatten()
     last_loot = await extract_code_block(bid_history)
     current_bids = []
@@ -280,20 +277,8 @@ async def get_current_bids(ctx):
     all_bids = await extract_green_text(current_bids)
     for bid in all_bids:
         await ctx.send(bid)
-
-async def get_time_to_warn():
-    today = datetime.datetime.today()
-    target_day = datetime.datetime(today.year,today.month,today.day,18,55,0)
-    
-    time_to_alarm = int(target_day.timestamp() - today.timestamp())
-    print(time_to_alarm)
-    await asyncio.sleep(time_to_alarm)
-    
-    await general_channel.send("@everyone D&D in 5 minutes")
-
 @bot.command()
 async def get_money_split(ctx, arg):
-
     gold = await get_gold()
     await ctx.send(f"the current split for {arg} is {gold} gold")
 bot.run(creds['APIKey'])
